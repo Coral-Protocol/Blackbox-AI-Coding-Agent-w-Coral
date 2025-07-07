@@ -1,4 +1,4 @@
-# BlackBoxAI: Agentic coding assistant
+# BlackBoxAI: Blackbox-AI-Coding-Agent-w-Coral
 
 This guide helps you build an AI-driven utility app for everyday users—right at the edge for the Qualcomm Challenge using Coral Protocol and multi-agent collaboration. Follow step-by-step setup instructions for agents, server, and UI.
 
