@@ -18,7 +18,7 @@ This guide helps you build an next-generation AI-driven coder with BLACKBOX.AI a
   Step-by-step guide to install and run Coral Server and Coral Studio with necessary dependencies (Java, Yarn, Node.js).
 
 - **Setup the Agents**  
-  Instructions to install and configure the Interface Agent and Monzo Agent using uv.
+  Instructions to install and configure the Interface Agent, BLACKBOX.AI Agent and Repo Understanding Agent using uv.
 
 - **Run the Agents**  
   Available options to run agents:
@@ -130,7 +130,7 @@ yarn dev
 <details>  
 
 - Terminate the Coral Server and Coral Studio connections from above and start below steps.
-- In this example, we are using the agents: [Coral Interface Agent](https://github.com/Coral-Protocol/Coral-Interface-Agent) and [Coral Monzo Agent](https://github.com/Coral-Protocol/Coral-Monzo-Agent).  
+- In this example, we are using the agents: [Interface Agent](https://github.com/Coral-Protocol/Coral-Interface-Agent),[BLACKBOX.AI Agent]([Coral-BlackboxAI-Agent](https://github.com/Coral-Protocol/Coral-BlackboxAI-Agent)), and [Repo Understanding Agent](https://github.com/Coral-Protocol/Coral-RepoUnderstanding-Agent) .  
 - Please click on the link and set up the agents by following the setup instructions in the repository.  
 - Check the output below to see how the terminal will look after succesfull installation, keep in mind the directory you are at while doing `uv sync`.
 
