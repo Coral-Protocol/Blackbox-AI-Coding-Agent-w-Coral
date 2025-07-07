@@ -1,14 +1,14 @@
 # BlackBoxAI: Blackbox-AI-Coding-Agent-w-Coral
 
-This guide helps you build an AI-driven utility app for everyday users—right at the edge for the Qualcomm Challenge using Coral Protocol and multi-agent collaboration. Follow step-by-step setup instructions for agents, server, and UI.
+This guide helps you build an next-generation AI-driven coder with BLACKBOX.AI and Coral Protocl. Follow step-by-step setup instructions for agents, server, and UI.
 
 ### Introduction
 
-- The Qualcomn Track challenges you to build a a powerful, AI-driven utility app for everyday users—right at the edge using the Coral Protocol, an open, standardized framework for AI agent collaboration. Coral enables multiple AI agents to communicate, share tasks, and coordinate through a structured messaging layer with threads and mentions. 
+- The BLACKBOX.AI Track invites you to harness the power of the BLACKBOX.AI Coding Agent as the centerpiece of your workflow. Push the boundaries of AI-driven software development by building innovative tools that supercharge productivity, accelerate prototyping, or transform the coding experience itself. BLACKBOX.AI provides advanced, real-time coding intelligence, allowing you to automate complex developer workflows, refactor code, generate documentation, or review pull requests with natural language.
 
-- The example of Coral Protocol solution is a Personal finance advisor system that provides secure, intelligent, and privacy-preserving financial management through natural language. The Personal finance advisor enables users to safely access and analyze their Monzo banking data using a local LLM/LLM provided by Groq, ensuring sensitive information never leaves their device. By integrating with Monzo’s official API and customized toolkits, the system supports conversational account balance checks, transaction history queries, and personalized financial advice.
-- Agents: [Interface Agent](https://github.com/Coral-Protocol/Coral-Interface-Agent) | [Monzo Agent](https://github.com/Coral-Protocol/Coral-Monzo-Agent)
-- [Demo Video](https://screen.studio/share/hbhDOITn)
+- The example of Coral Protocol solution is an Intelligent Coder system that enables advanced, context-aware code generation and understanding through multi-agent collaboration. The Intelligent Coder combines an interface agent, a repository understanding agent, and a BLACKBOX.AI agent integrated within Coral. Users interact with the interface agent via natural language to request code generation or ask about specific repositories. The repository understanding agent retrieves and analyzes relevant code from selected repos, providing essential context. Leveraging both this contextual information and the powerful capabilities of the BLACKBOX.AI agent, the system can generate new code tailored to the user's requirements—grounded in real-world codebases. This approach allows for seamless, intelligent code synthesis and reuse, all orchestrated through the Coral Protocol’s structured messaging and coordination framework.
+- Agents: [Interface Agent](https://github.com/Coral-Protocol/Coral-Interface-Agent) | [BLACKBOX.AI Agent]([Coral-BlackboxAI-Agent](https://github.com/Coral-Protocol/Coral-BlackboxAI-Agent)) | [Repo Understanding Agent](https://github.com/Coral-Protocol/Coral-RepoUnderstanding-Agent) 
+- [Demo Video](https://drive.google.com/file/d/1yE9p_h9-WMPu_lb21q-GR84gkiZbhqXu/view?usp=sharing)
 
 ![Qualcomn Instance](images/Monzo_agent_new.png)  
 
@@ -186,39 +186,53 @@ registry:
         - name: "MODEL_TEMPERATURE"
           value: "0.3"
           
-  monzo:
+  repo_understanding_agent:
     options:
       - name: "API_KEY"
         type: "string"
         description: "API key for the service"
-      - name: "MONZO_ACCESS_TOKEN"
+      - name: "GITHUB_ACCESS_TOKEN"
         type: "string"
-        description: "MONZO_ACCESS_TOKEN"
-      - name: "MONZO_ACCOUNT_ID"
-        type: "string"
-        description: "MONZO_ACCOUNT_ID"
+        description: "key for the github service"
     runtime:
       type: "executable"
-      command: ["bash", "-c", "/root/Coral-Monzo-Agent/run_agent.sh main.py"]
-      
+      command: ["bash", "-c", "/root/Coral-RepoUnderstanding-Agent/run_agent.sh main.py"]
       environment:
         - name: "API_KEY"
           from: "API_KEY"
-        - name: "MODEL"
-          value: "llama-3.3-70b-versatile"
-        - name: "LLM_MODEL_PROVIDER"
-          value: "groq"
-        - name: "MONZO_ACCESS_TOKEN"
-          from: "MONZO_ACCESS_TOKEN"
-        - name: "MONZO_ACCOUNT_ID"
-          from: "MONZO_ACCOUNT_ID"
+        - name: "GITHUB_ACCESS_TOKEN"
+          from: "GITHUB_ACCESS_TOKEN"
+        - name: "MODEL_NAME"
+          value: "gpt-4.1"
+        - name: "MODEL_PROVIDER"
+          value: "openai"
+        - name: "MODEL_TOKEN"
+          value: "16000"
+        - name: "MODEL_TEMPERATURE"
+          value: "0.3"
+
+  blackboxai_agent:
+    options:
+      - name: "BLACKBOXAI_API_KEY"
+        type: "string"
+        description: "API key for the service"
+    runtime:
+      type: "executable"
+      command: ["bash", "-c", "/root/Coral-BlackboxAI-Agent/run_agent.sh main.py"]
+      environment:
+        - name: "BLACKBOXAI_API_KEY"
+          from: "BLACKBOXAI_API_KEY"
+        - name: "BLACKBOXAI_URL"
+          value: "https://api.blackbox.ai"
+        - name: "MODEL_NAME"
+          value: "blackboxai/openai/gpt-4.1"
 ```
 
 - Run the [Coral Server](https://github.com/Coral-Protocol/coral-server) and [Coral Studio](https://github.com/Coral-Protocol/coral-studio). 
 
 - You do not need to set up the `.env` in the project directory for running in this mode; it will be captured through the variables below.  
 
-- After the agents are loaded properly, you will see "2 agents" connected. Proceed ahead with "Select Session", add the agents, api key and esure to add both the Custom Tools to the Interface Agent.
+- After the agents are loaded properly, you will see "3 agents" connected. Proceed ahead with "Select Session", add the agents, api key and esure to add both the Custom Tools to the Interface Agent.
 
 ![Vultr Instance](images/agent-connected.png)  
 
@@ -244,11 +258,21 @@ cd Coral-Interface-Agent
 uv run python main.py
 ```
 
-Run the Monzo Agent
+Run the RepoUnderstanding Agent
 
 ```bash
 # cd to directory
-cd Coral-Monzo-Agent
+cd Coral-RepoUnderstanding-Agent
+
+# Run the agent using `uv`:
+uv run python main.py
+```
+
+Run the BLACKBOX.AI Agent
+
+```bash
+# cd to directory
+cd Coral-BlackboxAI-Agent-Agent
 
 # Run the agent using `uv`:
 uv run python main.py
@@ -265,35 +289,123 @@ uv run python main.py
 
 ```bash
 # Input:
-Question: Help me check my transections of monzo for the last 2 months and give me some personal finance advice.
+Question: Could you please call repo understanding agent to retrieve the completed code of agent implementation on the main branch of Coral-Protocol/Coral-Monzo-Agent, keep it, and send the completed code to balckbox ai agent, ask it to take this as an example, then create an agent that is able to run on coral server with functionality of a simple calculator (add number)
 
 # Output:
-Answer: Here is a summary of your Monzo transactions for the past 2 months:
-- May 1: -£22.00 (University, bills)
-- May 14: -£120.00 (Person A, general)
-- May 14: -£20.81 (Mobile Provider, bills)
-- May 18: -£16.00 (Person A, general)
-- May 19: +£9.00 (Person B, income)
-- June 2: -£22.00 (University, bills)
-- June 6: +£6.66 (From Person C, income)
-- June 12: -£20.81 (Mobile Provider, bills)
-- June 17: +£100.00 (From Person C, income)
+Answer: Thank you for sharing the code. Here is an example of a simple addition agent for Coral Server, following the structure, event loop, and integration style from your provided `main.py`. This agent exposes a single tool `add_numbers(a: int, b: int) -&gt; int`, and uses the same Coral tool patterns:
 
-Notable spending patterns:
-- Regular bills to University and Mobile Provider.
-- Significant general spending to "Person A."
-- Income from Person B and Person C.
+import asyncio
+import os
+import json
+import logging
+from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain.prompts import ChatPromptTemplate
+from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain.chat_models import init_chat_model
+from langchain_core.tools import tool
+from dotenv import load_dotenv
+import urllib.parse
+from datetime import datetime
+import traceback
 
-Personalized financial advice:
-1. **Track Recurring Bills:** Your regular payments to University and Mobile Provider are predictable. Consider setting up automated budgeting for these to ensure you always have funds allocated.
-2. **Review Large Expenses:** The £120 payment to "Person A" stands out. Review such large transactions to ensure they are necessary and look for ways to reduce or avoid them if possible.
-3. **Increase Savings:** Try to set aside a portion of your income (even small amounts) right after you receive it. Automating savings can help build a financial cushion.
-4. **Monitor Cash Flow:** Your income is irregular. Consider ways to stabilize your income or reduce discretionary spending during lower-income months.
-5. **Analyze General Spending:** Categorize your general expenses to identify areas where you can cut back.
+# Setup logging
+logging.basicConfig(level=logging.INFO, format=&quot;%(asctime)s - %(levelname)s - %(message)s&quot;)
+logger = logging.getLogger(__name__)
 
-Would you like more detailed budgeting tips or help setting up a savings plan?
+# Load environment variables
+load_dotenv()
 
-Is there anything else I can help you with?
+base_url = os.getenv(&quot;CORAL_SSE_URL&quot;)
+agentID = os.getenv(&quot;CORAL_AGENT_ID&quot;)
+
+params = {
+    &quot;agentId&quot;: agentID,
+    &quot;agentDescription&quot;: &quot;An agent that simply adds two numbers using the add_numbers(a, b) tool. Only use the provided tools!&quot;
+}
+query_string = urllib.parse.urlencode(params)
+MCP_SERVER_URL = f&quot;{base_url}?{query_string}&quot;
+
+def get_tools_description(tools):
+    return &quot;\n&quot;.join(f&quot;Tool: {t.name}, Schema: {json.dumps(t.args).replace('{', '{{').replace('}', '}}')}&quot; for t in tools)
+
+@tool
+def add_numbers(a: int, b: int) -&gt; dict:
+    &quot;&quot;&quot;
+    Adds two integers and returns the result.
+
+    Args:
+        a (int): The first number.
+        b (int): The second number.
+    Returns:
+        dict: The sum as `result`.
+    &quot;&quot;&quot;
+    return {&quot;result&quot;: a + b}
+
+async def create_addition_agent(client, tools):
+    prompt = ChatPromptTemplate.from_messages([
+        (&quot;system&quot;, f&quot;&quot;&quot;You are `addition_agent`, responsible only for adding two numbers with add_numbers(a, b). You must only use the provided tools to fulfill user requests. Your workflow:\n\n1. Use wait_for_mentions(timeoutMs=60000) to wait for instructions.\n2. When a mention is received, record threadId and senderId (NEVER forget these two).\n3. Read the user's message and extract the numbers to add.\n4. Call add_numbers(a, b) with them.\n5. Generate a clear, direct reply with the result.\n6. If error, reply 'error'.\n7. Use send_message(senderId=..., mentions=[senderId], threadId=..., content=&quot;your answer&quot;) to reply.\n8. Always respond to the user.\n9. Wait 2 seconds and go back to step 1.\n\nTools: {get_tools_description(tools)}&quot;),
+        (&quot;placeholder&quot;, &quot;{history}&quot;),
+        (&quot;placeholder&quot;, &quot;{agent_scratchpad}&quot;)
+    ])
+
+    model = init_chat_model(
+        model=os.getenv(&quot;MODEL&quot;),
+        model_provider=os.getenv(&quot;LLM_MODEL_PROVIDER&quot;),
+        api_key=os.getenv(&quot;API_KEY&quot;),
+        temperature=0.3,
+        max_tokens=32768
+    )
+    agent = create_tool_calling_agent(model, tools, prompt)
+    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+async def main():
+    CORAL_SERVER_URL = f&quot;{base_url}?{query_string}&quot;
+    logger.info(f&quot;Connecting to Coral Server: {CORAL_SERVER_URL}&quot;)
+
+    client = MultiServerMCPClient(
+        connections={
+            &quot;coral&quot;: {
+                &quot;transport&quot;: &quot;sse&quot;,
+                &quot;url&quot;: CORAL_SERVER_URL,
+                &quot;timeout&quot;: 600,
+                &quot;sse_read_timeout&quot;: 600,
+            }
+        }
+    )
+    logger.info(&quot;Coral Server Connection Established&quot;)
+
+    tools = await client.get_tools()
+    coral_tool_names = [
+        &quot;list_agents&quot;,
+        &quot;create_thread&quot;,
+        &quot;add_participant&quot;,
+        &quot;remove_participant&quot;,
+        &quot;close_thread&quot;,
+        &quot;send_message&quot;,
+        &quot;wait_for_mentions&quot;,
+    ]
+    tools = [tool for tool in tools if tool.name in coral_tool_names]
+    tools += [add_numbers]
+
+    logger.info(f&quot;Tools Description:\n{get_tools_description(tools)}&quot;)
+
+    agent_executor = await create_addition_agent(client, tools)
+
+    while True:
+        try:
+            logger.info(&quot;Starting new agent invocation&quot;)
+            await agent_executor.ainvoke({&quot;agent_scratchpad&quot;: []})
+            logger.info(&quot;Completed agent invocation, restarting loop&quot;)
+            await asyncio.sleep(1)
+        except Exception as e:
+            logger.error(f&quot;Error in agent loop: {str(e)}&quot;)
+            logger.error(traceback.format_exc())
+            await asyncio.sleep(5)
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(main())
+
+Let me know if you'd like this as a file, or need further customization!
 ```
 
 </details>
