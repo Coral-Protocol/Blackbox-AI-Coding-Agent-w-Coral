@@ -10,7 +10,7 @@ This guide helps you build an next-generation AI-driven coder with BLACKBOX.AI a
 - Agents: [Interface Agent](https://github.com/Coral-Protocol/Coral-Interface-Agent) | [BLACKBOX.AI Agent](https://github.com/Coral-Protocol/Coral-BlackboxAI-Agent) | [Repo Understanding Agent](https://github.com/Coral-Protocol/Coral-RepoUnderstanding-Agent) 
 - [Demo Video](https://drive.google.com/file/d/1yE9p_h9-WMPu_lb21q-GR84gkiZbhqXu/view?usp=sharing)
 
-![Qualcomn Instance](images/Monzo_agent_new.png)  
+![BLACKBOX.AI Instance](images/blackboxai_track.png)  
 
 ### Outline
 
